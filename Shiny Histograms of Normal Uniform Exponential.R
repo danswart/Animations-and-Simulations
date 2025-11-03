@@ -1,58 +1,56 @@
-library(shiny)
+# library(shiny)
 
-
-
-
-
-parameter_tabs <- tabsetPanel(
+parameter_tabs <- shiny::tabsetPanel(
   id = "params",
   type = "hidden",
-  tabPanel("normal",
-    numericInput("mean", "mean", value = 1),
-    numericInput("sd", "standard deviation", min = 0, value = 1)
+  shiny::tabPanel(
+    "normal",
+    shiny::numericInput("mean", "mean", value = 1),
+    shiny::numericInput("sd", "standard deviation", min = 0, value = 1)
   ),
-  tabPanel("uniform",
-    numericInput("min", "min", value = 0),
-    numericInput("max", "max", value = 1)
+  shiny::tabPanel(
+    "uniform",
+    shiny::numericInput("min", "min", value = 0),
+    shiny::numericInput("max", "max", value = 1)
   ),
-  tabPanel("exponential",
-    numericInput("rate", "rate", value = 1, min = 0),
+  shiny::tabPanel(
+    "exponential",
+    shiny::numericInput("rate", "rate", value = 1, min = 0),
   )
 )
 
-ui <- fluidPage(
-  sidebarLayout(
-    sidebarPanel(
-      selectInput("dist", "Distribution",
+ui <- shiny::fluidPage(
+  shiny::sidebarLayout(
+    shiny::sidebarPanel(
+      shiny::selectInput(
+        "dist",
+        "Distribution",
         choices = c("normal", "uniform", "exponential")
       ),
-      numericInput("n", "Number of samples", value = 100),
+      shiny::numericInput("n", "Number of samples", value = 100),
       parameter_tabs,
     ),
-    mainPanel(
-      plotOutput("hist")
+    shiny::mainPanel(
+      shiny::plotOutput("hist")
     )
   )
 )
 
 server <- function(input, output, session) {
-  observeEvent(input$dist, {
-    updateTabsetPanel(inputId = "params", selected = input$dist)
+  shiny::observeEvent(input$dist, {
+    shiny::updateTabsetPanel(inputId = "params", selected = input$dist)
   })
 
-  sample <- reactive({
-    switch(input$dist,
-      normal = rnorm(input$n, input$mean, input$sd),
-      uniform = runif(input$n, input$min, input$max),
-      exponential = rexp(input$n, input$rate)
+  sample <- shiny::reactive({
+    switch(
+      input$dist,
+      normal = stats::rnorm(input$n, input$mean, input$sd),
+      uniform = stats::runif(input$n, input$min, input$max),
+      exponential = stats::rexp(input$n, input$rate)
     )
   })
-  output$hist <- renderPlot(hist(sample()), res = 96)
+  output$hist <- shiny::renderPlot(graphics::hist(sample()), res = 96)
 }
 
 
-
-
-
-
-shinyApp(ui, server)
+shiny::shinyApp(ui, server)
