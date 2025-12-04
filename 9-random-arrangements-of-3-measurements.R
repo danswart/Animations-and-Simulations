@@ -1,3 +1,9 @@
+# install.packages(c("mapview", "survey", "srvyr", "arcgislayers"))
+
+# census_api_key("95496766c51541ee6f402c1e1a8658581285b759", install = TRUE, overwrite = TRUE)
+
+# # load libraries - NOT NEEDED
+
 # Force dplyr's select to take precedence
 select <- dplyr::select
 filter <- dplyr::filter
@@ -13,6 +19,7 @@ options(shiny.maxRequestSize = 50 * 1024^2) # Set upload maximum to 50 MB
 options(tigris_use_cache = TRUE)
 
 
+# Flextable defaults:
 flextable::set_flextable_defaults(
   font.size = 14,
   font.family = "Cabin",
@@ -25,11 +32,86 @@ flextable::set_flextable_defaults(
   padding.right = 4,
   line_spacing = 1.3,
   digits = 2,
-  decimal.mark = ",",
+  decimal.mark = ".",
   big.mark = " ",
-  na_str = "<na>"
+  na_str = "<na>",
+  post_process_html = identity,
+  post_process_docx = identity
 )
 
+
+#
+# # Sample Code:
+# flextable::flextable(violations) |>
+#  flextable::set_header_labels(
+#    Variable = "Variable",
+#    Measurement = "Measurement",
+#    Likely_Impact = "Likely Impact"
+#  ) |>
+#    flextable::add_header_lines(values = "Frequent Violations of Scientific Method in Current So-Called 'Equity' Research") |>
+#   flextable::color(i = 1, color = "blue", part = "header") |>
+#   flextable::italic(i = 1, part = "header") |>
+#   flextable::align(i = 1, align = "center", part = "header") |>
+#   flextable::fontsize(i = 1, size = 14, part = "header") |>
+#   flextable::bg(i = 1, bg = "white", part = "header") |>
+#   flextable::bg(i = 2, bg = "palegreen", part = "header") |>
+#   flextable::bold(i = 1:2, part = "header") |>
+#   flextable::bold(i = 1:7, j = 1, part = "body") |>
+#   ftExtra::colformat_md() |>
+#   flextable::autofit()
+
+# Flextable built-in themes:
+# flextable::theme_alafoli()	|>  # BLAH
+# flextable::theme_apa()  # THIS IS NICE
+# flextable::theme_booktabs() |>  # NICE, MORE COMPACT
+# flextable::theme_box() |>   # OK, INCLUDES CELL BORDERS
+# flextable::theme_tron() |>  # 'DARK MODE' BLUE TEXT
+# flextable::theme_tron_legacy() |>   # 'DARK MODE' YELLOW TEXT
+# flextable::theme_vader() |>    # 'DARK MODE' WHITE TEXT
+# flextable::theme_vanilla() |>   # NOT SPECIAL
+# flextable::theme_zebra()	|>
+#
+
+# Flextable titles:
+# flextable::colformat_double(j = c("Mean", "SD", "N"), big.mark = ",", digits = 1) |>
+# flextable::flextable(variance_comparison) |>
+#  flextable::add_header_lines(values = "The Within-Group vs Between-Group Variance Problem") |>
+
+# Flextable Title theming at table-level:
+#  flextable::color(i = 1, color = "blue", part = "header") |>
+#  flextable::italic(i = 1, part = "header") |>
+#  flextable::align(i = 1, align = "center", part = "header") |>
+#  flextable::fontsize(i = 1, size = 14, part = "header") |>
+#  flextable::bg(i = 1, bg = "white", part = "header") |>
+
+# Flextable standard table background colors:
+#  flextable::bg(i = 2, bg = "palegreen", part = "header") |>
+
+# Flextable reading markdown:
+#  ftExtra::colformat_md() |>
+
+# Flextable auto-sizing cell widths:
+#  flextable::autofit()
+
+# Flextable background based on SPECIFIC cell contents:
+#
+# flextable::bg(i = ~ Impact_on_Validity == "High", j = "Impact_on_Validity", bg = "#ffcccc") |>
+# flextable::bg(i = ~ Impact_on_Validity == "Medium", j = "Impact_on_Validity", bg = "#ffffcc") |>
+#
+#
+# Apply yellow background to any cell containing "Yes":
+
+# for (col in base::names(hypotheses_data)) {
+#   yes_rows <- base::which(hypotheses_data[[col]] == "Yes")
+#   if (base::length(yes_rows) > 0) {
+#     ft <- ft |>
+#       flextable::bg(i = yes_rows, j = col, bg = "yellow", part = "body")
+#   }
+# }
+#
+# Apply to last row of table:
+#
+#
 
 # Set global theme for consistent plots
 ggplot2::theme_set(
@@ -40,9 +122,9 @@ ggplot2::theme_set(
         family = "Cabin",
         face = "bold",
         color = "darkgreen",
-        size = 22,
+        size = 26,
         fill = "yellow",
-        lineheight = 1.0,
+        lineheight = 1.2,
         padding = ggplot2::margin(5.5, 5.5, 0.0, 5.5),
         margin = ggplot2::margin(0, 0, 5.5, 0)
       ),
@@ -50,51 +132,53 @@ ggplot2::theme_set(
         family = "Cabin",
         color = "darkgreen",
         face = "bold",
-        size = 20,
+        size = 24,
         fill = "yellow",
-        lineheight = 1.0,
-        padding = ggplot2::margin(0.0, 5.5, 5.5, 5.5),
-        margin = ggplot2::margin(0, 0, 5.5, 0)
+        lineheight = 1.2,
+        padding = ggplot2::margin(5.5, 5.5, 5.5, 5.5),
+        margin = ggplot2::margin(10.5, 0, 5.5, 0)
       ),
       plot.caption = ggtext::element_markdown(
         family = "Cabin",
-        size = 16,
+        size = 22,
         hjust = 1,
         color = "darkblue",
         face = "italic",
         fill = "yellow",
         lineheight = 1.0
       ),
-      axis.text.x = ggplot2::element_blank(),
-      # ggtext::element_markdown(
-      #   family = "Cabin",
-      #   face = "bold",
-      #   color = "blue",
-      #   size = 16,
-      #   angle = 45,
-      #   hjust = 1
-      # ),
-      axis.title.x = ggplot2::element_blank(),
-      # ggtext::element_markdown(
-      #   family = "Cabin",
-      #   face = "bold",
-      #   color = "blue",
-      #   size = 16),
-      axis.text.y = ggplot2::element_blank(),
-      # ggtext::element_markdown(
-      #   family = "Cabin",
-      #   face = "bold",
-      #   color = "blue",
-      #   size = 16,
-      #   angle = 45,
-      #   hjust = 1
-      # ),
-      axis.title.y = ggplot2::element_blank(),
-      # ggtext::element_markdown(
-      #   family = "Cabin",
-      #   face = "bold",
-      #   color = "blue",
-      #   size = 16),
+      axis.text.x = ggtext::element_markdown(
+        family = "Cabin",
+        face = "bold",
+        color = "blue",
+        size = 20,
+        angle = 45,
+        hjust = 1
+      ),
+      # ggplot2::element_blank(),
+      axis.title.x = ggtext::element_markdown(
+        family = "Cabin",
+        face = "bold",
+        color = "blue",
+        size = 20
+      ),
+      # ggplot2::element_blank(),
+      axis.text.y = ggtext::element_markdown(
+        family = "Cabin",
+        face = "bold",
+        color = "blue",
+        size = 20,
+        angle = 45,
+        hjust = 1
+      ),
+      # ggplot2::element_blank(),
+      axis.title.y = ggtext::element_markdown(
+        family = "Cabin",
+        face = "bold",
+        color = "blue",
+        size = 20
+      ),
+      # ggplot2::element_blank(),
       strip.text = ggtext::element_markdown(
         family = "Cabin",
         color = "black",
@@ -117,7 +201,7 @@ ggplot2::theme_set(
 
 
 # Set seed for reproducibility
-set.seed(123)
+base::set.seed(123)
 
 
 # The 9 possible "shapes" or patterns for time-ordered measurements represent the unique ways the values can change from one time point to the next.
@@ -240,12 +324,15 @@ false_signals_facet_plot <- false_signals |>
     labeller = ggplot2::as_labeller(colored_labels)
   ) +
 
-  # ggplot2::facet_wrap(~signal, ncol = 3, nrow = 4) +
-  ggplot2::scale_x_continuous(breaks = c(0, 1, 2)) +
-  ggplot2::scale_y_continuous(breaks = c(0, 1, 2)) +
   ggplot2::scale_color_manual(values = signal_colors) +
   ggplot2::labs(x = NULL, y = NULL) +
-  ggplot2::labs(title = "Emotional Reactions to Random Changes") # Add main plot title
+  ggplot2::labs(title = "Emotional Reactions to Random Changes") + # Add main plot title
+  ggplot2::theme(
+    axis.text.x = ggplot2::element_blank(),
+    axis.text.y = ggplot2::element_blank(),
+    axis.ticks.x = ggplot2::element_blank(),
+    axis.ticks.y = ggplot2::element_blank()
+  )
 
 # Print the plot
 print(false_signals_facet_plot)
